@@ -5,8 +5,7 @@ venv/
 __pycache__/
 *.pyc
 
-# Trained model
-trained_model.pkl
+
 
 # Environment variables
 .env
