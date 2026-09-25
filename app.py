@@ -36,6 +36,7 @@ from pathlib import Path
 from sklearn.metrics.pairwise import cosine_similarity
 
 from career_data import CAREER_DATA, get_all_skills, get_career_names
+from project_data import PROJECT_DATA
 import model as struggle_model  # DAY 2: Student Struggle Prediction logic
 
 # ----------------------------------------------------------------------
@@ -427,6 +428,87 @@ def build_learning_roadmap(target_career, selected_skills):
     return missing_skills
 
 
+def recommend_projects(target_career, selected_skills):
+    """Rank projects using the target career, current skills, and career gaps."""
+    selected_skill_set = set(selected_skills)
+    gap_table = build_skill_gap_table(target_career, selected_skills)
+    career_gap_set = set(gap_table.loc[gap_table["Have It?"] == "❌ No", "Required Skill"])
+    recommendations = []
+
+    for project in PROJECT_DATA:
+        required_skills = set(project["required_skills"])
+        gained_skills = set(project["skills_gained"])
+        existing_matches = required_skills & selected_skill_set
+        gap_coverage = career_gap_set & (required_skills | gained_skills)
+        career_match = target_career in project["target_careers"]
+        existing_score = len(existing_matches) / len(required_skills) if required_skills else 0
+        gap_score = len(gap_coverage) / len(career_gap_set) if career_gap_set else 0
+        relevance = round((50 if career_match else 0) + (30 * existing_score) + (20 * gap_score))
+
+        recommendations.append(
+            {
+                **project,
+                "relevance": relevance,
+                "gap_coverage": gap_coverage,
+            }
+        )
+
+    return sorted(recommendations, key=lambda item: (-item["relevance"], item["project_name"]))
+
+
+def render_project_recommendations(target_career, selected_skills):
+    """Render personalized project cards without adding another profile flow."""
+    render_page_intro(
+        "Project Recommendations",
+        "Build your next career proof point.",
+        "Build projects that strengthen your skills and move you closer to your target career.",
+    )
+
+    compatibility_df = calculate_compatibility(selected_skills)
+    compatibility_row = compatibility_df.loc[compatibility_df["Career"] == target_career]
+    compatibility_score = float(compatibility_row["Compatibility (%)"].iloc[0]) if not compatibility_row.empty else 0
+    summary_cols = st.columns(2)
+    with summary_cols[0]:
+        render_metric_card("Target Career", target_career)
+    with summary_cols[1]:
+        render_metric_card("Career Compatibility", f"{compatibility_score:.1f}%")
+
+    recommendations = recommend_projects(target_career, selected_skills)[:5]
+    st.markdown('<div class="section-title">Recommended for You</div>', unsafe_allow_html=True)
+    st.caption("Recommendations combine career relevance, skills you already have, and skills you can build next.")
+
+    for project in recommendations:
+        existing_skills = [skill for skill in project["required_skills"] if skill in selected_skills]
+        why_parts = [f"matches your {target_career} goal"]
+        if existing_skills:
+            why_parts.append(f"builds on {', '.join(existing_skills[:3])}")
+        if project["gap_coverage"]:
+            why_parts.append(f"helps develop {', '.join(sorted(project['gap_coverage'])[:3])}")
+
+        skill_markup = "".join(
+            f'<span class="pill">{"✅" if skill in existing_skills else "⚠️"} {skill}</span>'
+            for skill in project["required_skills"]
+        )
+        gained_markup = "".join(f'<span class="pill">{skill}</span>' for skill in project["skills_gained"])
+        st.markdown(
+            f'<div class="soft-card">'
+            f'<div class="career-card-top"><h3>{project["project_name"]}</h3>'
+            f'<span class="career-score">{project["relevance"]}%</span></div>'
+            f'<p>{project["description"]}</p>'
+            f'<p><strong>Difficulty:</strong> {project["difficulty"]} &nbsp; '
+            f'<strong>Relevance:</strong> {project["relevance"]}%</p>'
+            f'<p><strong>Why this project?</strong> This project is recommended because it '
+            f'{"; ".join(why_parts)}.</p>'
+            f'<p><strong>Required Skills</strong><br>{skill_markup}</p>'
+            f'<p><strong>Skills You\'ll Gain</strong><br>{gained_markup}</p>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    if not recommendations:
+        st.info("No projects are available for this career yet. Choose another target career to explore projects.")
+
+
 # ----------------------------------------------------------------------
 # DAY 2 HELPER: cache the trained Random Forest so it's only trained
 # once per app session instead of retraining on every rerun/interaction.
@@ -448,6 +530,7 @@ def render_workspace_sidebar():
     pages = [
         ("⌂", "Home", "home"),
         ("◎", "Career Navigator", "career"),
+        ("💡", "Project Recommendations", "projects"),
         ("▥", "Academic Risk", "academic"),
         ("▤", "Skill Roadmap", "roadmap"),
         ("⚙", "Model Information", "model"),
@@ -680,6 +763,9 @@ def render_internal_application():
         gap_df = build_skill_gap_table(st.session_state["target_career"], student_skills)
         st.markdown('<div class="section-title">Skill gap analysis</div>', unsafe_allow_html=True)
         st.dataframe(gap_df, use_container_width=True, hide_index=True)
+
+    elif active_page == "projects":
+        render_project_recommendations(target_career, student_skills)
 
     elif active_page == "roadmap":
         render_page_intro(
