@@ -16,6 +16,7 @@ These components are presented together through a shared student profile and sid
 - Provide a skill-compatibility comparison across six predefined technology careers.
 - Highlight which required skills a student already has and which are missing for a selected career.
 - Generate a simple learning sequence from missing-skill priority and importance.
+- Generate a professional Student Report PDF containing academic and career guidance results.
 - Present prediction confidence, model metrics, feature importance, and a confusion matrix in an accessible interface.
 - Keep the two analytical components understandable and separate within one student workspace.
 
@@ -51,6 +52,10 @@ These components are presented together through a shared student profile and sid
 - Home summary with profile, career compatibility, skill gaps, and current academic-risk label.
 - Compatibility progress bars, risk cards, metric cards, data tables, bar charts, and a visual roadmap.
 - Responsive custom CSS styling for the Streamlit interface.
+
+### Professional Student Report
+
+The Student Report page generates a multi-page ReportLab PDF from the current session and existing results. It includes the Student Profile, Academic Performance, Risk Prediction, Career Guidance, Skill Gap Analysis, Project Recommendations, Learning Roadmap, and a graphical Career Guidance Flow Chart.
 
 ## 🧠 Machine Learning Approach
 
@@ -159,22 +164,33 @@ flowchart TD
     E --> F[Sidebar workspace]
     F --> G[Career Navigator]
     F --> H[Academic Risk]
-    F --> I[Skill Roadmap]
-    F --> J[Home summary]
-    F --> K[Model Information]
-    G --> L[Build skill vectors]
-    L --> M[Cosine-similarity compatibility scores]
-    M --> N[Choose target career]
-    N --> O[Skill-gap table]
-    O --> I
-    I --> P[Priority-ordered learning sequence]
-    H --> Q[Enter five academic indicators]
-    Q --> R[Stratified-trained Random Forest]
-    R --> S[Risk label and class probabilities]
-    R --> T[Metrics, confusion matrix, feature importance]
-    S --> J
-    M --> J
+      F --> I[Skill Roadmap]
+      F --> J[Student Report]
+      F --> K[Home summary]
+      F --> L[Model Information]
+      G --> N[Build skill vectors]
+      N --> O[Cosine-similarity compatibility scores]
+      O --> P[Choose target career]
+      P --> Q[Skill-gap table]
+      Q --> I
+      I --> M[Priority-ordered learning sequence]
+      H --> S[Enter five academic indicators]
+      S --> T[Stratified-trained Random Forest]
+      T --> U[Risk label and class probabilities]
+      T --> V[Metrics, confusion matrix, feature importance]
+      U --> K
+      G --> K
+      J --> N[Professional PDF report]
 ```
+
+The analytical workflow is: Student Profile → Academic Data → Random Forest Risk Prediction → Career Selection → Career-Skill Matching → Skill Gap Analysis → Project Recommendations → Learning Roadmap → Student Report.
+
+The algorithms are:
+
+1. **Random Forest Classifier** - academic risk prediction.
+2. **Cosine Similarity** - career-skill matching.
+3. **Rule-Based / Content-Based Recommendation** - project recommendations.
+4. **Rule-Based Prioritization** - skill gaps and roadmap ordering.
 
 ## 🖥️ Application Interface
 
@@ -199,6 +215,7 @@ No screenshots or image assets are currently present in the repository. The code
 | Machine Learning | scikit-learn: `RandomForestClassifier`, cosine similarity |
 | Data Processing | pandas, NumPy |
 | Model Persistence | joblib |
+| PDF Reports | ReportLab |
 | Visualization | Streamlit metrics, progress bars, dataframes, bar charts, and custom HTML/CSS |
 | Frontend/UI | Streamlit widgets with custom CSS in `app.py` |
 | Deployment | Local Streamlit execution; no deployment configuration is included |

@@ -33,6 +33,8 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from pathlib import Path
+import tempfile
+import re
 from sklearn.metrics.pairwise import cosine_similarity
 
 from career_data import CAREER_DATA, get_all_skills, get_career_names
@@ -533,6 +535,7 @@ def render_workspace_sidebar():
         ("💡", "Project Recommendations", "projects"),
         ("▥", "Academic Risk", "academic"),
         ("▤", "Skill Roadmap", "roadmap"),
+        ("📄", "Student Report", "report"),
         ("⚙", "Model Information", "model"),
     ]
     active_page = st.session_state.get("active_page", "home")
@@ -592,6 +595,8 @@ if not st.session_state.get("app_started", False):
         '<p>Understand your academic risk using machine learning.</p></div>'
         '<div class="feature-card"><div class="feature-icon">↗</div><h3>Skill Roadmap</h3>'
         '<p>Identify important skill gaps and follow a simple learning path.</p></div>'
+        '<div class="feature-card"><div class="feature-icon">📄</div><h3>Professional Student Report</h3>'
+        '<p>Generate a complete academic and career guidance report.</p></div>'
         '</div>',
         unsafe_allow_html=True,
     )
@@ -685,6 +690,65 @@ def get_current_academic_risk():
     return predicted_label, probabilities, trained_result
 
 
+def academic_values_from_session():
+    return {
+        "Attendance": st.session_state.get("academic_attendance", 75),
+        "Assignment_Completion": st.session_state.get("academic_assignment", 75),
+        "Quiz_Average": st.session_state.get("academic_quiz", 70),
+        "Previous_Marks": st.session_state.get("academic_previous_marks", 70),
+        "Study_Hours": st.session_state.get("academic_study_hours", 10),
+    }
+
+
+def build_report_data(target_career, student_skills):
+    current_risk, _, _ = get_current_academic_risk()
+    compatibility_df = calculate_compatibility(student_skills)
+    target_row = compatibility_df.loc[compatibility_df["Career"] == target_career]
+    compatibility_score = float(target_row["Compatibility (%)"].iloc[0]) if not target_row.empty else 0
+    gap_df = build_skill_gap_table(target_career, student_skills)
+    recommendations = recommend_projects(target_career, student_skills)[:5]
+    projects = []
+    for project in recommendations:
+        existing = [skill for skill in project["required_skills"] if skill in student_skills]
+        why_parts = [f"matches the {target_career} goal"]
+        if existing:
+            why_parts.append(f"builds on {', '.join(existing[:3])}")
+        if project["gap_coverage"]:
+            why_parts.append(f"helps develop {', '.join(sorted(project['gap_coverage'])[:3])}")
+        projects.append({**project, "why": "; ".join(why_parts)})
+    return {
+        "student_name": st.session_state["student_name"],
+        "student_year": st.session_state["student_year"],
+        "student_cgpa": st.session_state["student_cgpa"],
+        "student_skills": student_skills,
+        "target_career": target_career,
+        "recommended_career": compatibility_df.iloc[0]["Career"] if not compatibility_df.empty else target_career,
+        "compatibility_score": compatibility_score,
+        "required_skills": list(CAREER_DATA[target_career].keys()),
+        "missing_skills": gap_df.loc[gap_df["Have It?"] == "❌ No", "Required Skill"].tolist(),
+        "skill_gaps": gap_df.to_dict("records"),
+        "projects": projects,
+        "roadmap": build_learning_roadmap(target_career, student_skills),
+        "academic": academic_values_from_session(),
+        "current_risk": current_risk,
+    }
+
+
+def render_student_report(target_career, student_skills):
+    render_page_intro("Student Report", "📄 Professional Student Report", "Combine your current academic, career, skill-gap, project, and roadmap results into a faculty-ready PDF.")
+    report_data = build_report_data(target_career, student_skills)
+    st.markdown('<div class="soft-card"><h3>Report contents</h3><p>Profile, academic performance, Random Forest risk prediction, career guidance, skill gaps, recommended projects, learning roadmap, and flow chart.</p></div>', unsafe_allow_html=True)
+    safe_name = re.sub(r"[^A-Za-z0-9_-]+", "_", report_data["student_name"]).strip("_") or "Student"
+    if st.button("📄 Download Student Report", type="primary"):
+        from report_generator import generate_student_report
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_file:
+            report_path = temp_file.name
+        generate_student_report(report_path, report_data)
+        with open(report_path, "rb") as generated_file:
+            pdf_bytes = generated_file.read()
+        st.download_button("Download PDF", pdf_bytes, file_name=f"ML-Based_Student_Success_Career_Navigator_Report_{safe_name}.pdf", mime="application/pdf", type="primary")
+
+
 def render_internal_application():
     render_app_header()
     active_page = st.session_state.get("active_page", "home")
@@ -766,6 +830,9 @@ def render_internal_application():
 
     elif active_page == "projects":
         render_project_recommendations(target_career, student_skills)
+
+    elif active_page == "report":
+        render_student_report(target_career, student_skills)
 
     elif active_page == "roadmap":
         render_page_intro(
