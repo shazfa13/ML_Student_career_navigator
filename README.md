@@ -311,7 +311,9 @@ The following are future possibilities, not current features:
 ## 👩‍💻 Author
 
 **Name:** Shazfa Khursheed Mysha
+## 🚀 Live Demo
 
+👉 [**View Live Demo**](https://ml-studentcareernavigator.streamlit.app/)
 **GitHub:** [shazfa13](https://github.com/shazfa13)
 
 ## 📜 License
