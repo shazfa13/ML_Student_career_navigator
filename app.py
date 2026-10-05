@@ -125,14 +125,17 @@ st.markdown(
     [data-testid="stSidebar"] .stButton > button:hover { background: #e8e7fb; border-color: #deddf5; color: #413b9c; }
     [data-testid="stSidebar"] .stButton > button[kind="primary"] { background: #e1defd !important; color: #4c43ae !important; border-color: #d4d0f7 !important; }
     [data-testid="stSidebar"] .stButton > button[kind="primary"] p { color: #4c43ae !important; }
-    .hero-shell { --hero-height: 560px; background: linear-gradient(120deg, #f8f7ff 0%, #eef3ff 100%); border: 1px solid #e0e4f5; border-radius: 22px; padding: 3rem 3.4rem; min-height: var(--hero-height); height: var(--hero-height); box-sizing: border-box; margin: 0.2rem 0 1.8rem; box-shadow: 0 18px 42px rgba(44, 65, 125, 0.10); overflow: hidden; }
+    .hero-shell { background: linear-gradient(120deg, #f8f7ff 0%, #eef3ff 100%); border: 1px solid #e0e4f5; border-radius: 22px; padding: 2.8rem 3.4rem; min-height: 0; height: 100%; box-sizing: border-box; margin: 0.2rem 0 1.8rem; box-shadow: 0 18px 42px rgba(44, 65, 125, 0.10); overflow: visible; }
+    [data-testid="stHorizontalBlock"]:has(.hero-shell) { align-items: stretch; }
+    [data-testid="stHorizontalBlock"]:has(.hero-shell) > [data-testid="column"] { display: flex; flex-direction: column; }
+    [data-testid="stHorizontalBlock"]:has(.hero-shell) > [data-testid="column"] [data-testid="stImage"] { flex: 1; display: flex; }
     .hero-copy { padding: 1rem 0.5rem 0.4rem 0; }
-    .hero-shell h1 { font-size: clamp(2.1rem, 4vw, 3.7rem); line-height: 1.06; letter-spacing: -0.02em; margin: 0.55rem 0 1.1rem; }
-    .hero-shell h1 span { background: linear-gradient(90deg, #7358e8, #d764c8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-shell h1 { background: linear-gradient(90deg, #7358e8 0%, #a957df 52%, #d764c8 100%); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: clamp(2rem, 3.45vw, 3.25rem); line-height: 1.06; letter-spacing: -0.02em; margin: 0.55rem 0 1.1rem; }
+    .hero-shell h1 span { color: inherit; }
     .hero-shell .hero-lead { color: #556483; font-size: 1.12rem; line-height: 1.65; max-width: 560px; margin: 0 0 0.75rem; }
     .hero-shell .hero-support { color: #7b86a2; line-height: 1.65; max-width: 535px; margin: 0; }
-    .hero-visual { min-height: 560px; height: 560px; border-radius: 18px; background: linear-gradient(145deg, rgba(255,255,255,.18), rgba(221,228,255,.26)), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80') center/cover; background-blend-mode: screen, normal; box-shadow: inset 0 0 0 1px rgba(255,255,255,.75); position: relative; filter: brightness(1.08) saturate(1.08); }
-    [data-testid="stImage"] { height: 560px; min-height: 560px; border-radius: 18px; overflow: hidden; }
+    .hero-visual { min-height: 0; height: 100%; border-radius: 18px; background: linear-gradient(145deg, rgba(255,255,255,.18), rgba(221,228,255,.26)), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80') center/cover; background-blend-mode: screen, normal; box-shadow: inset 0 0 0 1px rgba(255,255,255,.75); position: relative; filter: brightness(1.08) saturate(1.08); }
+    [data-testid="stImage"] { height: 100%; min-height: 0; border-radius: 18px; overflow: hidden; }
     [data-testid="stImage"] img { width: 100%; height: 100%; object-fit: cover; filter: brightness(1.08) saturate(1.08); }
     .hero-visual::after { content: 'Plan today. Grow tomorrow.'; position: absolute; right: 1rem; bottom: 1rem; max-width: 130px; color: #314276; font-size: 0.78rem; font-weight: 700; line-height: 1.35; background: rgba(255,255,255,.82); padding: 0.65rem; border-radius: 10px; }
     .section-kicker { color: #6d62d9; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 0.5rem; }
@@ -569,8 +572,7 @@ if not st.session_state.get("app_started", False):
     with hero_left:
         st.markdown(
             '<div class="hero-shell"><div class="hero-copy">'
-            '<div class="eyebrow">Student success workspace</div>'
-            '<h1>ML-Based Student Success &amp;<br><span>Career Navigator</span></h1>'
+            '<h1>SKILLPATH ML<br>A Machine learning Based Student Success &amp;<br><span>Career Navigation System</span></h1>'
             '<p class="hero-lead">Understand your academic risk. Discover your career path. Build the skills to get there.</p>'
             '<p class="hero-support">One thoughtful workspace for academic-risk prediction, career guidance, and skill-gap analysis, designed to help you make your next step clearer.</p>'
             '</div></div>',
