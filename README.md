@@ -1,4 +1,4 @@
-#SKILLPATH ML- A Machine Learning-Based Academic Risk Prediction & Career Guidance System
+SKILLPATH ML- A Machine Learning-Based Academic Risk Prediction & Career Guidance System
 
 An interactive Streamlit workspace that combines academic-risk classification with skill-based career guidance and a rule-based learning roadmap.
 
