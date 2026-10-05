@@ -81,7 +81,7 @@ The code selects the five numeric columns, separates them from the target, and p
 
 ### 4. Model
 
-The academic model is `sklearn.ensemble.RandomForestClassifier` configured with 300 trees, maximum depth 12, minimum split size 4, minimum leaf size 2, balanced class weights, a fixed random state of 42, and parallel training.
+The academic model is a `sklearn.pipeline.Pipeline` that applies the project's engineered features before a balanced `sklearn.ensemble.RandomForestClassifier`. The forest is tuned with randomized search over tree count, depth, split size, leaf size, and feature selection.
 
 Career matching is not a trained machine-learning model. It uses `sklearn.metrics.pairwise.cosine_similarity` over a binary student skill vector and weighted career requirement vectors.
 
@@ -95,7 +95,7 @@ The academic page collects one set of slider values, creates a one-row DataFrame
 
 ### 7. Evaluation
 
-Evaluation is performed on the held-out test portion using accuracy, weighted precision, weighted recall, weighted F1-score, per-class classification metrics, and a confusion matrix. Feature importance is read from the Random Forest's built-in `feature_importances_` attribute.
+Evaluation is performed on the held-out test portion using accuracy, weighted precision, weighted recall, weighted F1-score, per-class classification metrics, and a confusion matrix. Feature importance is estimated with permutation importance on the held-out test data. Five-fold cross-validation is used during hyperparameter search on the training split only.
 
 ## 📊 Dataset
 
@@ -120,24 +120,44 @@ Career requirements are stored in `career_data.py` as a small hand-created mappi
 
 ## 📈 Model Performance
 
-The current training configuration produces the following values on the 250-record held-out test set from the repository CSV:
+The current tuned training configuration produces the following values on the 250-record held-out test set from the repository CSV:
 
 | Metric | Value |
 |---|---:|
-| Accuracy | 0.732000 |
-| Weighted precision | 0.753030 |
-| Weighted recall | 0.732000 |
-| Weighted F1-score | 0.737215 |
+| Accuracy | 0.9560 |
+| Weighted precision | 0.9559 |
+| Weighted recall | 0.9560 |
+| Weighted F1-score | 0.9559 |
 
-Per-class results from the same run:
+The cross-validated accuracy on the training split was **0.9213**. The best hyperparameters were:
 
-| Risk level | Precision | Recall | F1-score | Support |
-|---|---:|---:|---:|---:|
-| Low Risk | 0.822785 | 0.773810 | 0.797546 | 84 |
-| Medium Risk | 0.582524 | 0.722892 | 0.645161 | 83 |
-| High Risk | 0.852941 | 0.698795 | 0.768212 | 83 |
+```text
+rf__n_estimators: 250
+rf__min_samples_split: 10
+rf__min_samples_leaf: 2
+rf__max_features: log2
+rf__max_depth: 10
+```
 
-The application exposes these metrics, the confusion matrix, and feature-importance charts in the Academic Risk and Model Information pages. These results come from one fixed train/test split and should be interpreted in the context of the synthetic dataset.
+Permutation feature importance from the same evaluation was:
+
+| Feature | Importance |
+|---|---:|
+| Attendance | 0.1955 |
+| Assignment_Completion | 0.1938 |
+| Quiz_Average | 0.2116 |
+| Previous_Marks | 0.2670 |
+| Study_Hours | 0.1321 |
+
+Confusion matrix:
+
+| | Predicted: Low Risk | Predicted: Medium Risk | Predicted: High Risk |
+|---|---:|---:|---:|
+| **Actual: Low Risk** | 81 | 3 | 0 |
+| **Actual: Medium Risk** | 4 | 77 | 2 |
+| **Actual: High Risk** | 0 | 2 | 81 |
+
+The application exposes these metrics, the confusion matrix, and feature-importance charts in the Academic Risk and Model Information pages. The held-out metrics come from one fixed stratified train/test split and should be interpreted in the context of the synthetic dataset.
 
 ## 🧭 Career Guidance / Recommendation System
 
@@ -304,7 +324,7 @@ The application does not guarantee a career outcome or an academic decision; it 
 The following are future possibilities, not current features:
 
 - Replace or supplement the synthetic academic records with a larger, ethically collected real-world dataset.
-- Add cross-validation and broader validation across multiple train/test splits.
+- Add broader validation across multiple train/test splits.
 - Compare additional suitable classification algorithms.
 - Add stronger personalization that connects academic support signals with the selected learning roadmap.
 - Expand and maintain career skill requirements using current, responsibly sourced data.
