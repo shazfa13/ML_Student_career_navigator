@@ -582,7 +582,7 @@ if not st.session_state.get("app_started", False):
     with hero_right:
         hero_image = Path("assets/student_hero.jpg")
         if hero_image.exists():
-            st.image(str(hero_image), use_container_width=True)
+            st.image(str(hero_image))
         else:
             st.markdown('<div class="hero-visual" aria-label="Student studying at a desk"></div>', unsafe_allow_html=True)
 
