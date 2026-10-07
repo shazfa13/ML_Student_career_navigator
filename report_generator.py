@@ -178,7 +178,7 @@ def generate_student_report(filename, report_data):
     story.extend(_section("4. Career Guidance", styles))
     story.append(_table([["Measure", "Result"], ["Target Career", target], ["Recommended Career Match", report_data.get("recommended_career", target)], ["Career Compatibility", f"{compatibility:.1f}%"], ["Existing Skills", ", ".join(report_data.get("student_skills", [])) or "None"], ["Required Skills", ", ".join(report_data.get("required_skills", [])) or "None"], ["Skill Gap", ", ".join(report_data.get("missing_skills", [])) or "No missing skills identified"]], [55 * mm, 112 * mm], styles))
     story.extend(_section("Career Guidance Flow", styles))
-    story.append(CareerFlowChart(["Student Profile", "Academic & Skill Data", "Career Selection", "Career-Skill Matching", "Compatibility Analysis", "Skill Gap Identification", "Project Recommendations", "Learning Roadmap", "Career Readiness"]))
+    story.append(CareerFlowChart(["Student Profile", "Academic & Skill Data", "Career Selection", "Career-Skill Matching", "Compatibility Analysis", "Skill Gap Identification", "Project Recommendations", "Learning Learning Path", "Career Readiness"]))
 
     story.extend(_section("5. Skill Gap Analysis", styles))
     gap_rows = [["Skill", "Importance", "Status", "Priority"]]
@@ -200,7 +200,7 @@ def generate_student_report(filename, report_data):
         ]
         story.append(KeepTogether([_table(project_rows, [45 * mm, 122 * mm], styles, header=False), Spacer(1, 3 * mm)]))
 
-    story.extend(_section("7. Learning Roadmap", styles))
+    story.extend(_section("7. Learning Learning Path", styles))
     roadmap = report_data.get("roadmap", [])
     roadmap_steps = ["Current Skills"] + [item.get("skill", "") for item in roadmap[:3]] + ["Recommended Projects", "Career Preparation"]
     story.append(CareerFlowChart(roadmap_steps))

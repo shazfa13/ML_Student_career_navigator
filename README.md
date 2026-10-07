@@ -37,7 +37,7 @@ These components are presented together through a shared student profile and sid
 - Compatibility results sorted from highest to lowest.
 - A clear note that compatibility is not job-placement prediction.
 
-### Student Profile and Roadmap
+### Student Profile and Learning Path
 
 - Onboarding form for name, year of study, CGPA, current technical skills, and target career.
 - Editable profile details stored in Streamlit session state.
@@ -48,14 +48,14 @@ These components are presented together through a shared student profile and sid
 ### Workspace and Visualizations
 
 - Landing page with a student-success workspace introduction and a `Get Started` flow.
-- Sidebar navigation for Home, Career Navigator, Academic Risk, Skill Roadmap, and Model Information.
+- Sidebar navigation for Home, Career Navigator, Academic Risk, Skill Learning Path, and Model Information.
 - Home summary with profile, career compatibility, skill gaps, and current academic-risk label.
 - Compatibility progress bars, risk cards, metric cards, data tables, bar charts, and a visual roadmap.
 - Responsive custom CSS styling for the Streamlit interface.
 
 ### Professional Student Report
 
-The Student Report page generates a multi-page ReportLab PDF from the current session and existing results. It includes the Student Profile, Academic Performance, Risk Prediction, Career Guidance, Skill Gap Analysis, Project Recommendations, Learning Roadmap, and a graphical Career Guidance Flow Chart.
+The Student Report page generates a multi-page ReportLab PDF from the current session and existing results. It includes the Student Profile, Academic Performance, Risk Prediction, Career Guidance, Skill Gap Analysis, Project Recommendations, Learning Learning Path, and a graphical Career Guidance Flow Chart.
 
 ## 🧠 Machine Learning Approach
 
@@ -184,7 +184,7 @@ flowchart TD
     E --> F[Sidebar workspace]
     F --> G[Career Navigator]
     F --> H[Academic Risk]
-      F --> I[Skill Roadmap]
+      F --> I[Skill Learning Path]
       F --> J[Student Report]
       F --> K[Home summary]
       F --> L[Model Information]
@@ -203,7 +203,7 @@ flowchart TD
       J --> N[Professional PDF report]
 ```
 
-The analytical workflow is: Student Profile → Academic Data → Random Forest Risk Prediction → Career Selection → Career-Skill Matching → Skill Gap Analysis → Project Recommendations → Learning Roadmap → Student Report.
+The analytical workflow is: Student Profile → Academic Data → Random Forest Risk Prediction → Career Selection → Career-Skill Matching → Skill Gap Analysis → Project Recommendations → Learning Learning Path → Student Report.
 
 The algorithms are:
 
@@ -222,7 +222,7 @@ The application is a Streamlit web interface with a custom light visual theme de
 - **Career Navigator:** displays selected skills, sorted compatibility cards, target-career selection, and a skill-gap table.
 - **Project Recommendations:** suggests project ideas based on the selected target career and identified skill gaps.
 - **Academic Risk:** provides five sliders, a prediction action, class probabilities, important factors, evaluation metrics, and detailed tables.
-- **Skill Roadmap:** shows current skills, gaps, recommended learning, project applications, and the target career in a connected visual layout.
+- **Skill Learning Path:** shows current skills, gaps, recommended learning, project applications, and the target career in a connected visual layout.
 - **Student Report:** generates a downloadable multi-page PDF with the student's academic and career guidance results.
 - **Model Information:** explains cosine similarity and Random Forest in plain language and exposes evaluation details.
 
@@ -311,7 +311,7 @@ The terminal will provide the local URL, typically `http://localhost:8501`.
 5. Open **Career Navigator** to review compatibility scores, change the target career, and inspect the skill-gap table.
 6. Open **Academic Risk**, adjust the five academic sliders, and select **Predict Academic Risk** to see the predicted label and class probabilities.
 7. Review important factors and held-out evaluation results on the Academic Risk page or **Model Information** page.
-8. Open **Skill Roadmap** to explore the priority-ordered missing skills, suggested topics, and small project applications.
+8. Open **Skill Learning Path** to explore the priority-ordered missing skills, suggested topics, and small project applications.
 
 ## 📌 Example Workflow
 

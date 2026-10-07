@@ -537,7 +537,7 @@ def render_workspace_sidebar():
         ("◎", "Career Navigator", "career"),
         ("💡", "Project Recommendations", "projects"),
         ("▥", "Academic Risk", "academic"),
-        ("▤", "Skill Roadmap", "roadmap"),
+        ("▤", "Skill Learning Path", "roadmap"),
         ("📄", "Student Report", "report"),
         ("⚙", "Model Information", "model"),
     ]
@@ -595,7 +595,7 @@ if not st.session_state.get("app_started", False):
         '<p>Find careers that align with your current technical skills.</p></div>'
         '<div class="feature-card"><div class="feature-icon">◌</div><h3>Academic Risk</h3>'
         '<p>Understand your academic risk using machine learning.</p></div>'
-        '<div class="feature-card"><div class="feature-icon">↗</div><h3>Skill Roadmap</h3>'
+        '<div class="feature-card"><div class="feature-icon">↗</div><h3>Skill Learning Path</h3>'
         '<p>Identify important skill gaps and follow a simple learning path.</p></div>'
         '<div class="feature-card"><div class="feature-icon">📄</div><h3>Professional Student Report</h3>'
         '<p>Generate a complete academic and career guidance report.</p></div>'
@@ -838,7 +838,7 @@ def render_internal_application():
 
     elif active_page == "roadmap":
         render_page_intro(
-            "Skill Roadmap",
+            "Skill Learning Path",
             "Turn your career goal into a practical learning path.",
             "Your roadmap is generated from the current skills and target career you selected during onboarding.",
         )
@@ -1094,7 +1094,7 @@ with tab_career:
 
     # ---- 3. Target Career -------------------------------------------------
     st.subheader("3. Target Career")
-    st.write("Choose the career you want to work towards. This selection also drives the Dashboard, Skill Gap Analysis, and Learning Roadmap below.")
+    st.write("Choose the career you want to work towards. This selection also drives the Dashboard, Skill Gap Analysis, and Learning Learning Path below.")
 
     target_career = st.selectbox(
         "Select a target career to analyze:",
@@ -1121,8 +1121,8 @@ with tab_career:
 
     st.markdown("---")
 
-    # ---- 5. Learning Roadmap ------------------------------------------------
-    st.subheader("5. Learning Roadmap")
+    # ---- 5. Learning Learning Path ------------------------------------------------
+    st.subheader("5. Learning Learning Path")
     st.write(
         f"Suggested learning order to become a **{target_career}**, "
         "based on missing skills (High priority first):"
